@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Random letter</title>
+
+    <style>
+      html {
+        box-sizing: border-box;
+      }
+
+      *, *::before, *::after {
+        box-sizing: inherit;
+      }
+
+      html, body, .container {
+        height: 100%;
+      }
+
+      body {
+        margin: 0;
+        user-select: none;
+        font-family: sans-serif;
+      }
+
+      .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 50vw;
+        font-weight: bold;
+      }
+
+      @media screen and (max-height: 400px) {
+        .container {
+          font-size: 25vw;
+        }
+      }
+    </style>
+
+    <script>
+      window.addEventListener('DOMContentLoaded', function() {
+        initialize()
+      })
+
+      const letters = genCharArray('a', 'z')
+      const colors = ['#fdd', '#dfd', '#ddf', '#dff', '#ffd', '#fdf']
+
+      let timer = null
+
+      function initialize() {
+        changeLetter()
+
+        const body = document.querySelector('#container')
+        body.addEventListener('click', function() {
+          changeLetter()
+        })
+
+        body.addEventListener('keydown', function(event) {
+          switch (event.code) {
+            case 'Space': {
+              changeLetter()
+            }
+          }
+        })
+      }
+
+      function changeLetter() {
+        const letter = document.querySelector('#letter')
+        letter.textContent = getRandomLetter()
+
+        const container = document.querySelector('#container')
+        const bgColor = getRandomColor()
+        container.style.backgroundColor = bgColor
+      }
+
+      function getRandomLetter() {
+        return letters[Math.floor(Math.random() * letters.length)]
+      }
+
+      function getRandomColor() {
+        return colors[Math.floor(Math.random() * colors.length)]
+      }
+
+      function genCharArray(charA, charZ) {
+        var a = [], i = charA.charCodeAt(0), j = charZ.charCodeAt(0);
+        for (; i <= j; ++i) {
+          a.push(String.fromCharCode(i).toUpperCase());
+        }
+        return a;
+      }
+    </script>
+  </head>
+  <body>
+    <div id="container" class="container">
+      <div id="letter" class="letter"></div>
+    </div>
+  </body>
+</html>
