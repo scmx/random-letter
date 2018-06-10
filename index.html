@@ -30,6 +30,46 @@
         font-weight: bold;
       }
 
+      .toggle-settings {
+        z-index: 2;
+        position: absolute;
+        right: 1rem;
+        bottom: 1rem;
+        font-size: 3rem;
+        background: transparent;
+        border: 0;
+      }
+
+      .toggle-settings::after {
+        content: "\2699";
+      }
+
+      .settings {
+        z-index: 1;
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        min-height: 20%;
+        min-width: 20%;
+        background: white;
+      }
+
+      .settings-duration-label {
+        display: block;
+        margin: 1rem;
+      }
+
+      .settings-duration-input {
+        margin: 1rem;
+        padding: 0.3rem;
+        font-size: 2rem;
+        width: 8rem;
+      }
+
+      .hidden {
+        display: none;
+      }
+
       @media screen and (max-height: 400px) {
         .container {
           font-size: 25vw;
@@ -50,18 +90,71 @@
       function initialize() {
         changeLetter()
 
+        const toggleSettingsButton = document.querySelector('#toggle-settings')
+        toggleSettingsButton.addEventListener('click', function(event) {
+          event.preventDefault()
+          event.stopPropagation()
+
+          toggleSettings()
+        })
+
         const body = document.querySelector('#container')
         body.addEventListener('click', function() {
+          if (hideSettings()) { return }
+
           changeLetter()
         })
 
         body.addEventListener('keydown', function(event) {
           switch (event.code) {
             case 'Space': {
+              if (settingsOpen()) { return }
+
               changeLetter()
             }
           }
         })
+
+        const settingsDuration = document.querySelector('#settings-duration')
+        settingsDuration.addEventListener('change', function() {
+          if (settingsDuration.value) {
+            startTimer()
+          } else {
+            stopTimer()
+          }
+        })
+      }
+
+      function startTimer() {
+        const settingsDuration = document.querySelector('#settings-duration')
+
+        timer = setInterval(function () {
+          changeLetter()
+        }, Number(settingsDuration.value) * 1000)
+      }
+
+      function stopTimer() {
+        clearInterval(timer)
+      }
+
+      function toggleSettings() {
+        const settings = document.querySelector('.settings')
+        settings.classList.toggle('hidden')
+      }
+
+      function settingsOpen() {
+        const settings = document.querySelector('#settings')
+
+        return settings.classList.contains('hidden')
+      }
+
+      function hideSettings() {
+        if (settingsOpen()) { return false }
+
+        const settings = document.querySelector('#settings')
+        settings.classList.add('hidden')
+
+        return true
       }
 
       function changeLetter() {
@@ -93,6 +186,13 @@
   <body>
     <div id="container" class="container">
       <div id="letter" class="letter"></div>
+    </div>
+    <button id="toggle-settings" class="toggle-settings"></button>
+    <div id="settings" class="settings hidden">
+      <label for="settings-duration" class="settings-duration-label">
+        Update automatically every X seconds
+      </label>
+      <input id="settings-duration" class="settings-duration-input" />
     </div>
   </body>
 </html>
